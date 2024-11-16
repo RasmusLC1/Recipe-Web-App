@@ -16,7 +16,7 @@ function ListGroup({ items, heading, onSelectItem, onRemoveItem}: Props) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const getMessage = (item: string[]) => {
-    return item.length == 0 && <p>No cities found</p>;
+    return item.length == 0 && <p>No {heading} found</p>;
   };
 
   return (
