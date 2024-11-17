@@ -4,23 +4,46 @@ import ListGroup from "./ListGroup";
 import { useEffect, useState } from "react";
 import TextField from "./TextField";
 
-const useList = (itemName: string) => {
+// Takes an itemname and optionally a recipename
+const useList = (itemName: string, recipeName?: string) => {
+
+    // Create a storage key that includes the recipe name
+  const storageKey =
+  recipeName && itemName === "ingredients"
+    ? `${itemName}-${recipeName}`
+    : itemName;
+
   const [lists, setList] = useState<string[]>(() => {
-    const savedList = localStorage.getItem(itemName);
+    const savedList = localStorage.getItem(storageKey);
     return savedList ? JSON.parse(savedList) : [];
   });
   const [currentList, setCurrentList] = useState<string[]>(lists); // Tracks the current list
   const [alertVisible, setAlertVisibility] = useState(false);
 
+  // Update lists when storageKey changes
+  useEffect(() => {
+    if (storageKey) {
+      const savedList = localStorage.getItem(storageKey);
+      const parsedList = savedList ? JSON.parse(savedList) : [];
+      setList(parsedList);
+      setCurrentList(parsedList);
+    } else {
+      setList([]);
+      setCurrentList([]);
+    }
+  }, [storageKey]);
+  
   // Sync currentList with lists initially
   useEffect(() => {
     setCurrentList(lists);
   }, [lists]);
 
+
+
   // Store the updated lists
   useEffect(() => {
-    localStorage.setItem(itemName, JSON.stringify(lists));
-  }, [lists]);
+    localStorage.setItem(storageKey, JSON.stringify(lists));
+  }, [lists, storageKey]);
 
   // Automatically hide the alert after 3 seconds
   useEffect(() => {
@@ -33,8 +56,8 @@ const useList = (itemName: string) => {
     }
   }, [alertVisible]);
 
-  const clearLocalStorage = (item: string) => {
-    localStorage.removeItem(item);
+  const clearLocalStorage = () => {
+    localStorage.removeItem(storageKey);
   };
 
   const handleRemoveItem = (item: string) => {
@@ -62,7 +85,7 @@ const useList = (itemName: string) => {
           color="danger"
           onClick={() => {
             setAlertVisibility(true);
-            clearLocalStorage(itemName);
+            clearLocalStorage();
             setList([]);
           }}
         >
@@ -80,7 +103,7 @@ const useList = (itemName: string) => {
     return (
       <ListGroup
         items={currentList}
-        heading={itemName}
+        heading={recipeName ? `${itemName} for ${recipeName}` : itemName}
         onSelectItem={(item) => {if (onSelectItem) {
             onSelectItem(item); // Call the custom callback if provided
           } else {

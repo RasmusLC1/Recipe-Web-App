@@ -1,51 +1,47 @@
 import { useState } from "react";
 import Button from "./components/Button";
-
 import useList from "./components/ListUtil";
 
-
 function App() {
-  const [activeList, setActiveList] = useState<"recipes" | "ingredients"> ("recipes")
-  const recipesList  = useList("recipes"); // Destructure the rendering function
-  const ingredientsList  = useList("ingredients"); // Destructure the rendering function
+  const [activeList, setActiveList] = useState<"recipes" | "ingredients">(
+    "recipes"
+  );
+  const [selectedRecipe, setSelectedRecipe] = useState<string | undefined>(
+    undefined
+  );
+  const recipesList = useList("recipes");
+  const ingredientsList = useList("ingredients", selectedRecipe);
 
   const handleRecipeSelect = (recipe: string) => {
-    console.log(recipe)
-    setActiveList("ingredients")
-  }
-  
+    console.log(recipe);
+    setSelectedRecipe(recipe);
+    setActiveList("ingredients");
+  };
+
   const renderClearListButton = () => {
     return (
       <div>
         <Button
           color="success"
           onClick={() => {
-            setActiveList("recipes")
+            setActiveList("recipes");
+            setSelectedRecipe(undefined);
           }}
         >
-          return to recipes
+          Return to Recipes
         </Button>
       </div>
     );
   };
 
-
   const recipePageRender = recipesList.renderPage(handleRecipeSelect);
-  const ingredientsPageRender = ingredientsList.renderPage(handleRecipeSelect);
-
-  const handleIngredientsPage = () => {
-    return(
-      <>
-    {activeList === "ingredients" && renderClearListButton()}
-    {activeList === "ingredients" && ingredientsPageRender}
-    </>
-    )
-  }
+  const ingredientsPageRender = ingredientsList.renderPage();
 
   return (
     <div>
       {activeList === "recipes" && recipePageRender}
-      {handleIngredientsPage()}
+      {activeList === "ingredients" && renderClearListButton()}
+      {activeList === "ingredients" && ingredientsPageRender}
     </div>
   );
 }
