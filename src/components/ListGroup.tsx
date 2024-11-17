@@ -1,44 +1,60 @@
 import { Fragment } from "react";
-import { useState } from "react";
-import React, { ReactNode } from "react";
-
-// Ctrl + shiift + P to use prettyfy
+import { useState, ReactNode } from "react";
 
 interface ListGroupProps {
   items: string[];
   heading: ReactNode;
-  onSelectItem: (item: string) => void;
-  onRemoveItem: (item: string) => void;
+  onSelectItem: (item: string) => void; // Action for selecting an item
+  onRemoveItem?: (item: string) => void; // Optional action for removing an item
 }
 
-function ListGroup({ items, heading, onSelectItem, onRemoveItem}: Props) {
-  // Allows react to know that this component is dynamic and can change
+function ListGroup({ items, heading, onSelectItem, onRemoveItem }: ListGroupProps) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
-  const getMessage = (item: string[]) => {
-    return item.length == 0 && <p>No {heading} found</p>;
+  const getMessage = () => {
+    if (items.length === 0) {
+      return <p>No {heading} found</p>;
+    }
   };
+
+  const removeButton = (item: string) => {
+    return (
+      <div>
+      {onRemoveItem && (
+        <button
+          className="btn btn-danger btn-sm ms-2"
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering onSelectItem
+            onRemoveItem(item); // Handle item removal
+          }}
+        >
+          Remove
+        </button>
+      )}
+      </div>
+    )
+  }
 
   return (
     <Fragment>
       <h1>{heading}</h1>
-      {getMessage(items)}
+      {getMessage()}
       <ul className="list-group">
         {items.map((item, index) => (
           <li
+            key={item}
             className={
-              selectedIndex == index
+              selectedIndex === index
                 ? "list-group-item active"
                 : "list-group-item"
             }
-            key={item}
             onClick={() => {
               setSelectedIndex(index);
-              onSelectItem(item);
-              onRemoveItem(item);
+              onSelectItem(item); // Handle selection logic
             }}
           >
             {item}
+            {removeButton(item)}
           </li>
         ))}
       </ul>

@@ -1,99 +1,51 @@
-import Alert from "./components/Alert";
-import Button from "./components/button";
-import ListGroup from "./components/ListGroup";
-import { useEffect, useState } from "react";
-import TextField from "./components/TextField";
+import { useState } from "react";
+import Button from "./components/Button";
+
+import useList from "./components/ListUtil";
+
 
 function App() {
-  const [recipes, setRecipes] = useState<string[]>(() => {
-    const savedRecipes = localStorage.getItem("recipes");
-    return savedRecipes ? JSON.parse(savedRecipes) : [];
-  });
-  const [alertVisible, setAlertVisibility] = useState(false);
+  const [activeList, setActiveList] = useState<"recipes" | "ingredients"> ("recipes")
+  const recipesList  = useList("recipes"); // Destructure the rendering function
+  const ingredientsList  = useList("ingredients"); // Destructure the rendering function
 
-  // Store the updated recipes
-  useEffect(() => {
-    localStorage.setItem("recipes", JSON.stringify(recipes));
-  }, [recipes]);
-
-
-  // Automatically hide the alert after 10 seconds
-  useEffect(() => {
-    if (alertVisible) {
-      const timer = setTimeout(() => {
-        setAlertVisibility(false); // Hide the alert
-      }, 3000); // 3 seconds
-
-      return () => clearTimeout(timer); // Cleanup the timer if alertVisible changes
-    }
-  }, [alertVisible]);
-  const handleSelectItem = (item: string) => {
-    console.log(item);
-  };
-
-  const clearLocalStorage = (item: string) => {
-    localStorage.removeItem(item);
+  const handleRecipeSelect = (recipe: string) => {
+    console.log(recipe)
+    setActiveList("ingredients")
   }
-
   
-  const handleRemoveItem = (item: string) => {
-    setRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe != item));
-  };
-  
-  const handleAddItem = (item: string) => {
-    if (item.trim() !== "") {
-      setRecipes((prevRecipes) => [...prevRecipes, item.trim()]);
-    }
-  };
-  
-  const recipesClearedAlertRender = () =>{
+  const renderClearListButton = () => {
     return (
-      alertVisible && (
-        <Alert onClose={() => setAlertVisibility(false)}>Recipes Cleared</Alert>
-      )
-    )
-  }
-  const renderButtons = () => {
-    return <div><Button color="danger" onClick={() => {
-      setAlertVisibility(true);
-      clearLocalStorage("recipes")
-      setRecipes([]);
-      }}>
-      Delete all recipes
-    </Button></div>
-  }
-
-  const handleAddItemRender = () => {
-    return <TextField onEnter={handleAddItem}></TextField>
-
-  }
-
-  const renderRecipes = () => {
-    return (
-      <ListGroup
-        items={recipes}
-        heading={"Recipes"}
-        onSelectItem={(item) => console.log(item)}
-        onRemoveItem={handleRemoveItem}
-        />
-      );
-      };
-  
-      // <> = React.Fragment avoids <div>
-  const recipePageRender = () =>{
-    return (
-      <>
-      {recipesClearedAlertRender()}
-      {handleAddItemRender()}
-      {renderButtons()}
-      {renderRecipes()}
-      </>
+      <div>
+        <Button
+          color="success"
+          onClick={() => {
+            setActiveList("recipes")
+          }}
+        >
+          return to recipes
+        </Button>
+      </div>
     );
   };
 
+
+  const recipePageRender = recipesList.renderPage(handleRecipeSelect);
+  const ingredientsPageRender = ingredientsList.renderPage(handleRecipeSelect);
+
+  const handleIngredientsPage = () => {
+    return(
+      <>
+    {activeList === "ingredients" && renderClearListButton()}
+    {activeList === "ingredients" && ingredientsPageRender}
+    </>
+    )
+  }
+
   return (
     <div>
-      {recipePageRender()}
+      {activeList === "recipes" && recipePageRender}
+      {handleIngredientsPage()}
     </div>
   );
 }
