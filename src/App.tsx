@@ -26,15 +26,15 @@ function App() {
   const renderReturnToRecipeButton = () => {
     return (
       <div>
-        <Button
-          color="success"
+        <button
+          className ="btn btn-success btn-sm return-to-recipe-button"
           onClick={() => {
             setActiveList("recipes");
             setSelectedRecipe(undefined);
           }}
         >
           Return to Recipes
-        </Button>
+        </button>
       </div>
     );
   };

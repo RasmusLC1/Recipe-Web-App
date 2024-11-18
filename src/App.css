@@ -7,6 +7,7 @@
     width: 100vw;            /* Full viewport width */
 }
 
+
 .list-group-item {
     display: flex; /* Make the list item a flex container */
     justify-content: space-between; /* Space out the item text and the button */
@@ -21,7 +22,29 @@
   .remove-button {
     margin-left: 80px; /* Adds extra spacing between the text and button */
   }
+  .remove-button:hover {
+    transform: scale(1.2);
+  }
 
   .delete-all-button {
     margin-top: 10px; /* Adds extra spacing between the text and button */
+  }
+
+  .delete-all-button:hover {
+    transform: scale(1.2);
+  }
+
+  .return-to-recipe-button {
+    height: 50px;
+    width: 200px;
+  }
+
+  .img-thumbnail{
+    margin-right: 20px; /* Adds extra spacing between the text and button */
+    height: 50px;
+    width: 50x;
+  }
+
+  .return-to-recipe-button:hover {
+    transform: scale(1.2);
   }

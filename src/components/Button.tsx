@@ -5,7 +5,8 @@ interface Props {
   children: ReactNode;
   onClick: () => void;
 }
-// TEST
+
+
 const Button = ({ color = "primary", children, onClick }: Props) => {
   return (
     <button className={"btn btn-" + color} onClick={onClick}>

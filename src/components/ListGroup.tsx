@@ -1,5 +1,5 @@
-import { Fragment } from "react";
-import { useState, ReactNode } from "react";
+import { Fragment, useState, ReactNode } from "react";
+import Image from "./Image";
 
 interface ListGroupProps {
   items: string[];
@@ -8,7 +8,12 @@ interface ListGroupProps {
   onRemoveItem?: (item: string) => void; // Optional action for removing an item
 }
 
-function ListGroup({ items, heading, onSelectItem, onRemoveItem }: ListGroupProps) {
+function ListGroup({
+  items,
+  heading,
+  onSelectItem,
+  onRemoveItem,
+}: ListGroupProps) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const DefaultMessage = () => {
@@ -20,46 +25,58 @@ function ListGroup({ items, heading, onSelectItem, onRemoveItem }: ListGroupProp
   const removeButton = (item: string) => {
     return (
       <div>
-      {onRemoveItem && (
-        <button
-          className="btn btn-danger btn-sm remove-button"
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent triggering onSelectItem
-            onRemoveItem(item); // Handle item removal
-          }}
-        >
-          Remove
-        </button>
-      )}
+        {onRemoveItem && (
+          <button
+            className="btn btn-danger btn-sm remove-button"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent triggering onSelectItem
+              onRemoveItem(item); // Handle item removal
+              localStorage.removeItem(item);
+
+            }}
+          >
+            Remove
+          </button>
+        )}
       </div>
-    )
-  }
+    );
+  };
+
+  const thumbnail = (item: string) => {
+    return (
+      <div>
+        <Image 
+          className="img-thumbnail" 
+          path= {`${item}.jpg`}
+        />
+      </div>
+    );
+  };
 
   const editButton = (item: string) => {
     return (
       <div>
-      {onRemoveItem && (
-        <button
-          className="btn btn-danger btn-sm edit-button"
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent triggering onSelectItem
-            onRemoveItem(item); // Handle item removal
-          }}
-        >
-          Remove
-        </button>
-      )}
+        {onRemoveItem && (
+          <button
+            className="btn btn-danger btn-sm edit-button"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent triggering onSelectItem
+              onRemoveItem(item); // Handle item removal
+            }}
+          >
+            Remove
+          </button>
+        )}
       </div>
-    )
-  }
+    );
+  };
 
   const setClassName = (index: number) => {
-      const className = selectedIndex === index
-        ? "list-group-item active"
-        : "list-group-item"
-      
-      return className
-  }
+    const className =
+      selectedIndex === index ? "list-group-item active" : "list-group-item";
+
+    return className;
+  };
 
   return (
     <Fragment>
@@ -68,13 +85,14 @@ function ListGroup({ items, heading, onSelectItem, onRemoveItem }: ListGroupProp
       <ul className="list-group">
         {items.map((item, index) => (
           <li
-            key={item}
-            className={`${setClassName(index)} d-flex justify-content-between align-items-center`}
-            onClick={() => {
-              setSelectedIndex(index);
-              onSelectItem(item); // Handle selection logic
-            }}
+          key={item}
+          className={`${setClassName(index)} d-flex justify-content-between align-items-center`}
+          onClick={() => {
+            setSelectedIndex(index);
+            onSelectItem(item); // Handle selection logic
+          }}
           >
+          {heading && typeof heading === "string" && heading.toLowerCase().includes("recipe") && thumbnail(item)}
             <span>{item}</span>
             {removeButton(item)}
           </li>
