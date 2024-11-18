@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "./components/Button";
 import useList from "./components/ListUtil";
+import './App.css'
 
 function App() {
   const [activeList, setActiveList] = useState<"recipes" | "ingredients">(
@@ -18,7 +19,11 @@ function App() {
     setActiveList("ingredients");
   };
 
-  const renderClearListButton = () => {
+  const handleIngredientSelect = (ingredient: string) => {
+    console.log(ingredient);
+  };
+
+  const renderReturnToRecipeButton = () => {
     return (
       <div>
         <Button
@@ -35,13 +40,23 @@ function App() {
   };
 
   const recipePageRender = recipesList.renderPage(handleRecipeSelect);
-  const ingredientsPageRender = ingredientsList.renderPage();
+  const ingredientsPageRender = ingredientsList.renderPage(handleIngredientSelect);
+
+  const RenderPage = () => {
+    return (
+      <>
+      {activeList === "recipes" && recipePageRender}
+      {activeList === "ingredients" && ingredientsPageRender}
+      </>
+    )
+  }
 
   return (
-    <div>
-      {activeList === "recipes" && recipePageRender}
-      {activeList === "ingredients" && renderClearListButton()}
-      {activeList === "ingredients" && ingredientsPageRender}
+      <div>
+        {activeList === "ingredients" && renderReturnToRecipeButton()}
+        <div className="centered-container">
+          {RenderPage()}
+        </div>
     </div>
   );
 }

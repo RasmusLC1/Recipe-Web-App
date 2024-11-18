@@ -1,0 +1,27 @@
+.centered-container {
+    display: flex;
+    flex-direction: column;  /* Aligns children vertically */
+    justify-content: center; /* Centers content vertically in the container */
+    align-items: center;     /* Centers content horizontally in the container */
+    height: 100vh;           /* Full viewport height */
+    width: 100vw;            /* Full viewport width */
+}
+
+.list-group-item {
+    display: flex; /* Make the list item a flex container */
+    justify-content: space-between; /* Space out the item text and the button */
+    align-items: center; /* Vertically align content */
+    padding: 10px; /* Optional: Adjust padding for better spacing */
+  }
+
+  .list-group-item span {
+    flex-grow: 1; /* Makes the text take up all available space */
+  }
+  
+  .remove-button {
+    margin-left: 80px; /* Adds extra spacing between the text and button */
+  }
+
+  .delete-all-button {
+    margin-top: 10px; /* Adds extra spacing between the text and button */
+  }

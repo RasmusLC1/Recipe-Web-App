@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, {useState } from "react";
+
 
 interface TextFieldProps {
+  itemName: string
   onEnter: (item: string) => void;
 }
 
-const TextField = ({ onEnter }: TextFieldProps) => {
+const TextField = ({itemName, onEnter}: TextFieldProps) => {
   const [value, setValue] = useState("");
 
   const HandleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -21,13 +23,13 @@ const TextField = ({ onEnter }: TextFieldProps) => {
   return (
     <div>
       <label htmlFor="FormControl" className="form-label">
-        AddRecipe
+        Add {itemName}
       </label>
       <input
         type="email"
         className="form-control"
         id="FormControl"
-        placeholder="Add Recipe"
+        placeholder= {`Add ${itemName}`}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={HandleKeyDown}

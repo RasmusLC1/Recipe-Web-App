@@ -1,17 +1,17 @@
 import Alert from "./Alert";
 import Button from "./Button";
 import ListGroup from "./ListGroup";
+import ListObject from "./ListObject";
 import { useEffect, useState } from "react";
 import TextField from "./TextField";
 
 // Takes an itemname and optionally a recipename
 const useList = (itemName: string, recipeName?: string) => {
-
-    // Create a storage key that includes the recipe name
+  // Create a storage key that includes the recipe name
   const storageKey =
-  recipeName && itemName === "ingredients"
-    ? `${itemName}-${recipeName}`
-    : itemName;
+    recipeName && itemName === "ingredients"
+      ? `${itemName}-${recipeName}`
+      : itemName;
 
   const [lists, setList] = useState<string[]>(() => {
     const savedList = localStorage.getItem(storageKey);
@@ -32,13 +32,11 @@ const useList = (itemName: string, recipeName?: string) => {
       setCurrentList([]);
     }
   }, [storageKey]);
-  
+
   // Sync currentList with lists initially
   useEffect(() => {
     setCurrentList(lists);
   }, [lists]);
-
-
 
   // Store the updated lists
   useEffect(() => {
@@ -65,9 +63,16 @@ const useList = (itemName: string, recipeName?: string) => {
   };
 
   const handleAddItem = (item: string) => {
-    if (item.trim() !== "") {
-      setList((prevList) => [...prevList, item.trim()]);
+    if (item.trim() === "") {
+      return
     }
+    if (itemName === "ingredients"){
+      const modifiedItem = ListObject(item);
+      setList((prevList) => [...prevList, modifiedItem.trim()]);
+      return
+    }
+
+    setList((prevList) => [...prevList, item.trim()]);
   };
 
   const listsClearedAlertRender = () => {
@@ -81,8 +86,8 @@ const useList = (itemName: string, recipeName?: string) => {
   const renderClearListButton = () => {
     return (
       <div>
-        <Button
-          color="danger"
+        <button
+          className="btn btn-danger btn-sm delete-all-button"
           onClick={() => {
             setAlertVisibility(true);
             clearLocalStorage();
@@ -90,26 +95,25 @@ const useList = (itemName: string, recipeName?: string) => {
           }}
         >
           Delete all {itemName}
-        </Button>
+        </button>
       </div>
     );
   };
 
+  // Send the textfield to handleAddItem when enter
   const handleAddItemRender = () => {
-    return <TextField onEnter={handleAddItem}></TextField>;
+    return <TextField itemName = {itemName} onEnter={handleAddItem}></TextField>;
   };
 
-  const renderList = (onSelectItem?: (item: string) => void ) => {
+  const renderList = (onSelectItem?: (item: string) => void) => {
     return (
       <ListGroup
         items={currentList}
         heading={recipeName ? `${itemName} for ${recipeName}` : itemName}
-        onSelectItem={(item) => {if (onSelectItem) {
+        onSelectItem={(item) => {
+          if (onSelectItem) {
             onSelectItem(item); // Call the custom callback if provided
-          } else {
-            // Default behavior: Update current list
-            setCurrentList([`Details of ${item}`, `${item} Step 1`, `${item} Step 2`]);
-          }
+          } 
         }}
         onRemoveItem={handleRemoveItem}
       />
@@ -117,7 +121,7 @@ const useList = (itemName: string, recipeName?: string) => {
   };
 
   // <> = React.Fragment avoids <div>
-  const renderPage = (onSelectItem?: (item: string) => void ) => {
+  const renderPage = (onSelectItem?: (item: string) => void) => {
     return (
       <>
         {listsClearedAlertRender()}
