@@ -92,7 +92,7 @@ function ListGroup({
             onSelectItem(item); // Handle selection logic
           }}
           >
-          {heading && typeof heading === "string" && heading.toLowerCase().includes("recipe") && thumbnail(item)}
+          {heading && typeof heading === "string" &&  !heading.toLowerCase().includes("ingredient") && thumbnail(item)}
             <span>{item}</span>
             {removeButton(item)}
           </li>

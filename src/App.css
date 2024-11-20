@@ -3,8 +3,8 @@
     flex-direction: column;  /* Aligns children vertically */
     justify-content: center; /* Centers content vertically in the container */
     align-items: center;     /* Centers content horizontally in the container */
+    gap: 10px;
     height: 100vh;           /* Full viewport height */
-    width: 100vw;            /* Full viewport width */
 }
 
 
@@ -38,7 +38,7 @@
     height: 50px;
     width: 200px;
   }
-
+  
   .img-thumbnail{
     margin-right: 20px; /* Adds extra spacing between the text and button */
     height: 50px;
@@ -48,3 +48,11 @@
   .return-to-recipe-button:hover {
     transform: scale(1.2);
   }
+
+#display_image{
+  width: 375px;
+  height: 211px;
+  border: 1px solid black;
+  background-position: center;
+  background-size: cover;
+}

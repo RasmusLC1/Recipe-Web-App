@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Button from "./components/Button";
 import useList from "./components/ListUtil";
+import IngedientsPage from "./components/IngedientsPage";
 import './App.css'
 
 function App() {
@@ -19,9 +19,7 @@ function App() {
     setActiveList("ingredients");
   };
 
-  const handleIngredientSelect = (ingredient: string) => {
-    console.log(ingredient);
-  };
+
 
   const renderReturnToRecipeButton = () => {
     return (
@@ -40,20 +38,24 @@ function App() {
   };
 
   const recipePageRender = recipesList.renderPage(handleRecipeSelect);
-  const ingredientsPageRender = ingredientsList.renderPage(handleIngredientSelect);
 
   const RenderPage = () => {
     return (
       <>
       {activeList === "recipes" && recipePageRender}
-      {activeList === "ingredients" && ingredientsPageRender}
+      {activeList === "ingredients" && (
+        <IngedientsPage
+        selectedRecipe = "selectedRecipe"
+        setActiveList = {setActiveList}
+        setSelectedRecipe = {setSelectedRecipe}
+        />
+      )}
       </>
     )
   }
 
   return (
       <div>
-        {activeList === "ingredients" && renderReturnToRecipeButton()}
         <div className="centered-container">
           {RenderPage()}
         </div>
