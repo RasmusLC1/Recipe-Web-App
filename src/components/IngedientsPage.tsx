@@ -1,5 +1,7 @@
-import React from 'react'
+import {useState} from 'react'
 import useList from "./ListUtil";
+
+import axios from 'axios';
 
 
 interface Props {
@@ -12,19 +14,34 @@ interface Props {
   const IngedientsPage = ({selectedRecipe, setActiveList, setSelectedRecipe}: Props) => {
       const ingredientsList = useList("ingredients", selectedRecipe);
       
-      
-      const image_input = document.querySelector("#image_input");
-      var uploaded_image = "";
-      
-      image_input.addEventListener("change", function() {
-          const reader = new FileReader();
-          reader.addEventListener("load", () => {
-              uploaded_image = reader.result;
-              document.querySelector("#display_image").style.backgroundImage = `url(${uploaded_image})`;
-          });
-          reader.readAsDataURL(this.files[0]);
-      });
 
+      const [selectedFile, setSelectedFile] = useState<File | null>(null); // Properly using useState to manage the file
+      const fileSelectedHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files ? event.target.files[0] : null;
+        if (file) {
+          setSelectedFile(file);
+          console.log(file); // Log file for debugging
+        }
+      };
+      
+      const fileUploadHandler = () => {
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append('file', selectedFile, selectedFile.name);
+          axios.post('/upload', formData)
+            .then(response => console.log(response, "test"))
+            .catch(error => console.error(error));
+        }
+      };
+
+      const fileInput = () => (
+        <div className="fileInput">
+          <input type="file" onChange={fileSelectedHandler} />
+          <button className="btn btn-success btn-sm upload-button" onClick={fileUploadHandler}>
+            Upload Image
+          </button>
+        </div>
+      );
 
   const renderReturnToRecipeButton = () => {
     return (
@@ -47,6 +64,7 @@ interface Props {
     <>
     {renderReturnToRecipeButton()}
     {ingredientsList.renderPage()}
+    {fileInput()}
     </>
   )
 }
