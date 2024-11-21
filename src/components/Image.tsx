@@ -6,7 +6,7 @@ interface ImageProps {
 }
 
 const Image = ({ className, path }: ImageProps) => {
-    const imagePath = `../../public/pictures/${path}`;
+    const imagePath = `../../public/uploads/${path}`;
     return (
       <img
       src={imagePath} 

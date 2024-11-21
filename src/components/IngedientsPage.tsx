@@ -31,9 +31,9 @@ interface Props {
       const fileUploadHandler = () => {
         if (selectedFile) {
           const formData = new FormData();
-          formData.append('file', selectedFile, selectedFile.name);
-          axios.post('/upload', formData)
-            .then(response => console.log(response, "test"))
+          formData.append('file', selectedFile, `${selectedRecipe}.jpg`);
+          axios.post('http://localhost:5000/upload', formData)
+            .then(response => console.log(response))
             .catch(error => console.error(error));
         }
       };
