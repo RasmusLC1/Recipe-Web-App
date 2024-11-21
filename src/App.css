@@ -23,10 +23,16 @@
   .remove-button {
     margin-left: 80px; /* Adds extra spacing between the text and button */
   }
+
+
   .remove-button:hover {
     transform: scale(1.2);
   }
 
+  .recipe-image {
+    width: 400px;
+    height: auto;
+  }
   .delete-all-button {
     margin-top: 10px; /* Adds extra spacing between the text and button */
   }
@@ -40,6 +46,14 @@
     width: 200px;
   }
   
+  /* Top right corner*/
+  .fileInput {
+    position: fixed;
+    top: 0; 
+    right: 0;
+    width: 300px;
+}
+
   .img-thumbnail{
     margin-right: 20px; /* Adds extra spacing between the text and button */
     height: 50px;

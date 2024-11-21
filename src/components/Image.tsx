@@ -5,7 +5,7 @@ interface ImageProps {
   path?: string; // Only the filename, e.g., "lasanga.jpg"
 }
 
-const Image = ({ className, path }: ImageProps) => {
+const Image = ({ className, path}: ImageProps) => {
     const imagePath = `../../public/uploads/${path}`;
     return (
       <img

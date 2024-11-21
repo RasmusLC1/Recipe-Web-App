@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
     cb(null, 'public/uploads'); // Save files to 'public/uploads' directory
   },
   filename: function (req, file, cb) {
-    // Use the original name set in the client, which is `${selectedRecipe}.jpg`
+    // Use the original name set in the client
     cb(null, file.originalname);
   }
 });
