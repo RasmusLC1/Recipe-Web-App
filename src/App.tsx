@@ -3,6 +3,7 @@ import useList from "./components/ListUtil";
 import IngedientsPage from "./components/IngedientsPage";
 import './App.css'
 
+
 function App() {
   const [activeList, setActiveList] = useState<"recipes" | "ingredients">(
     "recipes"
@@ -11,7 +12,6 @@ function App() {
     undefined
   );
   const recipesList = useList("recipes");
-  const ingredientsList = useList("ingredients", selectedRecipe);
 
   const handleRecipeSelect = (recipe: string) => {
     console.log(recipe);
@@ -19,23 +19,6 @@ function App() {
     setActiveList("ingredients");
   };
 
-
-
-  const renderReturnToRecipeButton = () => {
-    return (
-      <div>
-        <button
-          className ="btn btn-success btn-sm return-to-recipe-button"
-          onClick={() => {
-            setActiveList("recipes");
-            setSelectedRecipe(undefined);
-          }}
-        >
-          Return to Recipes
-        </button>
-      </div>
-    );
-  };
 
   const recipePageRender = recipesList.renderPage(handleRecipeSelect);
 
@@ -45,7 +28,7 @@ function App() {
       {activeList === "recipes" && recipePageRender}
       {activeList === "ingredients" && (
         <IngedientsPage
-        selectedRecipe = "selectedRecipe"
+        selectedRecipe = {selectedRecipe}
         setActiveList = {setActiveList}
         setSelectedRecipe = {setSelectedRecipe}
         />

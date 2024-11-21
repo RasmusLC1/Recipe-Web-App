@@ -8,10 +8,11 @@ const ListObject = (itemName: string, portionSize?: number) => {
     const amount: number = matchAmountUnit && matchAmountUnit[1]
     ? parseInt(matchAmountUnit[1])
     : -1;
+    const amountHolder: number = amount
     
 
     const adjustedAmount = amount > 0
-    ? (portionSize ? amount * portionSize : amount)
+    ? (portionSize ? amountHolder * portionSize : amountHolder)
     : -1;
     
     

@@ -1,44 +1,54 @@
+import React, { useEffect, useState } from "react";
 import Alert from "./Alert";
 import Button from "./Button";
 import ListGroup from "./ListGroup";
 import ListObject from "./ListObject";
-import { useEffect, useState } from "react";
 import TextField from "./TextField";
 
-// Takes an itemname and optionally a recipename
-const useList = (itemName: string, recipeName?: string) => {
+// Takes an item name, optionally a recipe name, and a portion size
+const useList = (
+  itemName: string,
+  recipeName?: string,
+  portionSize?: number
+) => {
   // Create a storage key that includes the recipe name
   const storageKey =
     recipeName && itemName === "ingredients"
       ? `${itemName}-${recipeName}`
       : itemName;
 
+  // State to store raw list items
   const [lists, setList] = useState<string[]>(() => {
     const savedList = localStorage.getItem(storageKey);
     return savedList ? JSON.parse(savedList) : [];
   });
-  const [currentList, setCurrentList] = useState<string[]>(lists); // Tracks the current list
+
+  // State to store the current list adjusted for portion size
+  const [currentList, setCurrentList] = useState<string[]>([]); // Initialize as empty array
+
   const [alertVisible, setAlertVisibility] = useState(false);
 
   // Update lists when storageKey changes
   useEffect(() => {
-    if (storageKey) {
-      const savedList = localStorage.getItem(storageKey);
-      const parsedList = savedList ? JSON.parse(savedList) : [];
-      setList(parsedList);
-      setCurrentList(parsedList);
-    } else {
-      setList([]);
-      setCurrentList([]);
-    }
+    const savedList = localStorage.getItem(storageKey);
+    const parsedList = savedList ? JSON.parse(savedList) : [];
+    setList(parsedList);
   }, [storageKey]);
 
-  // Sync currentList with lists initially
+  // Update currentList when lists or portionSize change
   useEffect(() => {
-    setCurrentList(lists);
-  }, [lists]);
+    if (itemName === "ingredients" && portionSize !== undefined) {
+      // Adjust the list items based on portionSize
+      const updatedList = lists.map((item) =>
+        ListObject(item, portionSize)
+      );
+      setCurrentList(updatedList);
+    } else {
+      setCurrentList(lists);
+    }
+  }, [lists, portionSize, itemName]);
 
-  // Store the updated lists
+  // Store the updated lists in localStorage
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(lists));
   }, [lists, storageKey]);
@@ -49,29 +59,28 @@ const useList = (itemName: string, recipeName?: string) => {
       const timer = setTimeout(() => {
         setAlertVisibility(false); // Hide the alert
       }, 3000);
-
       return () => clearTimeout(timer); // Cleanup the timer
     }
   }, [alertVisible]);
 
   const clearLocalStorage = () => {
     localStorage.removeItem(storageKey);
+    setList([]);
   };
 
   const handleRemoveItem = (item: string) => {
-    setList((prevList) => prevList.filter((recipe) => recipe !== item));
+    // Find the index of the item in the currentList
+    const index = currentList.indexOf(item);
+    if (index !== -1) {
+      // Remove the corresponding item from the raw list
+      setList((prevList) => prevList.filter((_, i) => i !== index));
+    }
   };
 
   const handleAddItem = (item: string) => {
     if (item.trim() === "") {
-      return
+      return;
     }
-    if (itemName === "ingredients"){
-      const modifiedItem = ListObject(item);
-      setList((prevList) => [...prevList, modifiedItem.trim()]);
-      return
-    }
-
     setList((prevList) => [...prevList, item.trim()]);
   };
 
@@ -86,23 +95,24 @@ const useList = (itemName: string, recipeName?: string) => {
   const renderClearListButton = () => {
     return (
       <div>
-        <button
-          className="btn btn-danger btn-sm delete-all-button"
+        <Button
+          color="danger"
           onClick={() => {
             setAlertVisibility(true);
             clearLocalStorage();
-            setList([]);
           }}
         >
           Delete all {itemName}
-        </button>
+        </Button>
       </div>
     );
   };
 
-  // Send the textfield to handleAddItem when enter
+  // Render the text field to handle adding items when Enter is pressed
   const handleAddItemRender = () => {
-    return <TextField itemName = {itemName} onEnter={handleAddItem}></TextField>;
+    return (
+      <TextField itemName={itemName} onEnter={handleAddItem}></TextField>
+    );
   };
 
   const renderList = (onSelectItem?: (item: string) => void) => {
@@ -113,14 +123,14 @@ const useList = (itemName: string, recipeName?: string) => {
         onSelectItem={(item) => {
           if (onSelectItem) {
             onSelectItem(item); // Call the custom callback if provided
-          } 
+          }
         }}
         onRemoveItem={handleRemoveItem}
       />
     );
   };
 
-  // <> = React.Fragment avoids <div>
+  // <> = React.Fragment avoids adding extra <div> elements
   const renderPage = (onSelectItem?: (item: string) => void) => {
     return (
       <>
@@ -132,7 +142,11 @@ const useList = (itemName: string, recipeName?: string) => {
     );
   };
 
-  return { renderPage, addItem: handleAddItem, removeItem: handleRemoveItem };
+  return {
+    renderPage,
+    addItem: handleAddItem,
+    removeItem: handleRemoveItem,
+  };
 };
 
 export default useList;

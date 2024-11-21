@@ -2,7 +2,8 @@ import {useState} from 'react'
 import useList from "./ListUtil";
 
 import axios from 'axios';
-
+import DropDownButton from './DropdownButton';
+import Button from './Button';
 
 interface Props {
     selectedRecipe: string
@@ -12,9 +13,12 @@ interface Props {
 
   
   const IngedientsPage = ({selectedRecipe, setActiveList, setSelectedRecipe}: Props) => {
-      const ingredientsList = useList("ingredients", selectedRecipe);
       
+      const [portion, setPortion] = useState<number | undefined> (
+          1
+        );
 
+    const ingredientsList = useList("ingredients", selectedRecipe, portion);
       const [selectedFile, setSelectedFile] = useState<File | null>(null); // Properly using useState to manage the file
       const fileSelectedHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
@@ -37,31 +41,43 @@ interface Props {
       const fileInput = () => (
         <div className="fileInput">
           <input type="file" onChange={fileSelectedHandler} />
-          <button className="btn btn-success btn-sm upload-button" onClick={fileUploadHandler}>
-            Upload Image
-          </button>
+          <Button 
+          color ="success" 
+          children =  "Upload Image"
+          onClick={fileUploadHandler}>
+        </Button>
         </div>
       );
 
   const renderReturnToRecipeButton = () => {
     return (
       <div>
-        <button
-          className ="btn btn-success btn-sm return-to-recipe-button"
-          onClick={() => {
+        <Button
+          color ="success"
+          children = "Return to Recipes"
+          onClick= {() => {
             setActiveList("recipes");
             setSelectedRecipe(undefined);
           }}
-        >
-          Return to Recipes
-        </button>
+        />
       </div>
     );
   };
 
+  const renderDropDownButton = () => {
+    return (
+      <DropDownButton
+        color="secondary"
+        children={`Portion Size: ${portion}`}
+        onClick={(selectedPortion) => setPortion(selectedPortion)}
+      />
+    );
+  }
+
 
   return (
     <>
+    {renderDropDownButton()}
     {renderReturnToRecipeButton()}
     {ingredientsList.renderPage()}
     {fileInput()}
